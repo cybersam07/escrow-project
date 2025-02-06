@@ -86,7 +86,7 @@
                 <option value="usdt">USDT</option>
                 <option value="btc">BTC</option>
                 <option value="eth">ETH</option>
-                <option value="bank">Bank Transfer</option>
+                <option value="bank">Binance</option>
             </select>
 
             <label for="address">Receiving Address:</label>
@@ -94,7 +94,7 @@
         </div>
         <div class="balance">Escrow Balance: π<span id="escrowBalance">0</span></div>
         <p>Equivalent in USD: $<span id="usdValue">0</span></p>
-        <button class="release" onclick="releaseFunds()">Release Funds</button>
+        <button class="release" onclick="releaseFunds()">Initiate Sell</button>
         <button class="dispute" onclick="raiseDispute()">Raise Dispute</button>
     </div>
     <script>
@@ -134,7 +134,7 @@
                 document.getElementById('usdValue').textContent = "0";
             } else {
                 document.getElementById('escrowBalance').textContent = amount;
-                document.getElementById('usdValue').textContent = (amount * 20).toFixed(2); // Assuming 1 π = 20 USD
+                document.getElementById('usdValue').textContent = (amount * 75).toFixed(2); // Assuming 1 π = 75 USD
             }
         }
 
